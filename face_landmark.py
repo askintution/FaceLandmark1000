@@ -19,6 +19,9 @@ class FaceLandmark(object):
         self.filter = OneEuroFilter()
         self.previous_landmarks_set = None
 
+    """
+    图像预处理，
+    """
     def run(self, image, bbox):
         processed_image, details = self.preprocess(image, bbox)
         ort_inputs = {self.ort_session.get_inputs()[0].name: self.to_numpy(processed_image)}
@@ -35,7 +38,12 @@ class FaceLandmark(object):
         cv2.imshow('', image)
         cv2.waitKey(1)
 
+
     def preprocess(self, image, bbox):
+        """
+        1. 补边，在四周都补上一个长边的高度
+        2. 在新图像上截取一块区域作为输入
+        """
         bbox_width = bbox[2] - bbox[0]
         bbox_height = bbox[3] - bbox[1]
         if bbox_width <= self.min_face or bbox_height <= self.min_face:
